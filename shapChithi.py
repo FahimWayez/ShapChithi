@@ -16,3 +16,12 @@ def register():
     chatHistory[userName] = []
     print("Registration is successful. You have become a python.")
     
+def login():
+    userName = input("Please enter your username: ")
+    password = getpass.getpass("Enter your password: ")
+    
+    if userName in userDatabase and userDatabase[userName] == password:
+        print("Congratulations! Login successful.")
+        return userName
+    else: print("Invalid username or password. Please try again.")
+    return None

@@ -59,3 +59,26 @@ if __name__ == "__main__":
             print("5. Logout")
             
         print("6. Exit")
+
+        choice = input("Please enter a choice: ")
+        
+        if choice == '1' and currentUser is None:
+            register()
+        elif choice == '2' and currentUser is None:
+            currentUser = login()
+            if currentUser:
+                userSessions[currentUser] = True
+        elif choice == '3' and currentUser:
+            receiver = input("Enter the recipient's username: ")
+            message = input('Enter your message: ')
+            sendMessage(currentUser, receiver, message)
+        elif choice == '4' and currentUser:
+            displayChat(currentUser)
+        elif choice == '5' and currentUser:
+            logout(currentUser)
+            currentUser = None
+        elif choice == '6':
+            print("Goodbye tata Allah hafiz")
+            break
+        else: print("Invalid choice, please try again.")
+        

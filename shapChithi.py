@@ -48,7 +48,7 @@ def displayChat(userName):
 if __name__ == "__main__":
     currentUser = None
     while True:
-        print("\nPlease select one: ")
+        print("\nOptions: ")
         if currentUser is None:
             print("1. Register")
             print("2. Login")

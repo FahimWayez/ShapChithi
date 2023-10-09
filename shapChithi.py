@@ -78,7 +78,12 @@ if __name__ == "__main__":
             logout(currentUser)
             currentUser = None
         elif choice == '6':
-            print("Goodbye tata Allah hafiz")
-            break
+            exitChoice = input("You sure want to exit? (Y/N): ")
+            if exitChoice.lower() == 'y':
+                print("Goodbye tata Allah hafiz")
+                break
+            elif exitChoice.lower() == 'n':
+                pass
+            else: print("Invalid input. Please enter y or n only.")
         else: print("Invalid choice, please try again.")
         

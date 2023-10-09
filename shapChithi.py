@@ -32,4 +32,15 @@ def logout(userName):
         print("Logout Successful")
     else:
         print("Not logged in") #eta shoray dite hobe pore
-        
+    
+def sendMessage(sender, receiver, message):
+    if receiver in chatHistory:
+        chatHistory[receiver].append(f"{sender}: {message}") 
+        chatHistory[sender].append(f"You to {receiver}: {message}")  
+    else: print("Invalid recipient") 
+    
+def displayChat(userName):
+    if userName in chatHistory:
+        for message in chatHistory[userName]:
+            print(message)
+    else: print("You have no chat history to be shown")

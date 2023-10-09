@@ -4,7 +4,21 @@ userDatabase = {}
 chatHistory = {}
 userSessions = {}
 
+
+def clearScreen():
+    print('\033c')
+
+
+def shundorHeader():
+    print('='*40)
+    print('Shap Chithi')
+    print('='*40)
+    
 def register():
+    clearScreen()
+    shundorHeader()
+    print("Registration Portal")
+    print('='*40)
     userName = input("Please enter your username: ")
     password = getpass.getpass("Please enter a password: ")
     cPassword = getpass.getpass("Confirm your password: ")
@@ -17,6 +31,10 @@ def register():
     print("Registration is successful. You have become a python.")
     
 def login():
+    clearScreen()
+    shundorHeader()
+    print("Login Portal")
+    print('='*40)
     userName = input("Please enter your username: ")
     password = getpass.getpass("Enter your password: ")
     
@@ -27,6 +45,8 @@ def login():
     return None
 
 def logout(userName):
+    clearScreen()
+    shundorHeader()
     if userName in userSessions:
         del userSessions[userName]
         print("Logout Successful")
@@ -40,6 +60,8 @@ def sendMessage(sender, receiver, message):
     else: print("Invalid recipient") 
     
 def displayChat(userName):
+    clearScreen()
+    shundorHeader()
     if userName in chatHistory:
         for message in chatHistory[userName]:
             print(message)
@@ -48,12 +70,15 @@ def displayChat(userName):
 if __name__ == "__main__":
     currentUser = None
     while True:
-        print("\nOptions: ")
+        clearScreen()
+        shundorHeader()
         if currentUser is None:
+            print("\nOptions: ")
             print("1. Register")
             print("2. Login")
         else:
             print(f"Logged in as {currentUser}")
+            print("\nOptions: ")
             print("3. Send message")
             print("4. Display messages")
             print("5. Logout")

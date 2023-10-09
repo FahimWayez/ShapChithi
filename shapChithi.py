@@ -25,3 +25,11 @@ def login():
         return userName
     else: print("Invalid username or password. Please try again.")
     return None
+
+def logout(userName):
+    if userName in userSessions:
+        del userSessions[userName]
+        print("Logout Successful")
+    else:
+        print("Not logged in") #eta shoray dite hobe pore
+        

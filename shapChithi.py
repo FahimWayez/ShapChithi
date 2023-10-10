@@ -9,18 +9,22 @@ userSessions = {}
 credentials = 'credentials.txt'
 chatHistory = 'chatHistory'
 
+
 def clearScreen():
     sleep(1.5)
     print('\033c')
+
 
 def shundorHeader():
     print('='*40, end="\n")
     print('Shap Chithi')
     print('='*40, end="\n")
 
+
 def writeCredentials(userName, password):
     with open(credentials, 'a') as file:
         file.write(f'{userName}:{password}\n')
+
 
 def readCredentials():
     try:
@@ -32,19 +36,22 @@ def readCredentials():
     except FileNotFoundError:
         pass
 
+
 def createUserDirectory(userName):
     userDirectory = os.path.join(chatHistory, userName)
     os.makedirs(userDirectory, exist_ok=True)
-    
+
+
 def writeMessage(userName, receiver, message):
     senderFile = os.path.join(chatHistory, userName, f'{receiver}.txt')
     with open(senderFile, 'a') as file:
         file.write(f'You to {receiver}:{message}\n')
-    
+
     receiverFile = os.path.join(chatHistory, receiver, f'{userName}.txt')
     with open(receiverFile, 'a') as file:
         file.write(f'{userName}:{message}\n')
-    
+
+
 def readChat(userName):
     chatHistory = []
     userDirectory = os.path.join(chatHistory, userName)
@@ -135,7 +142,7 @@ def displayChat(userName):
 
 if __name__ == "__main__":
     readCredentials()
-    
+
     os.makedirs(chatHistory, exist_ok=True)
 
     currentUser = None
@@ -192,4 +199,3 @@ if __name__ == "__main__":
                 print("Invalid input. Please enter y or n only.")
         else:
             print("Invalid choice, please try again.")
-        

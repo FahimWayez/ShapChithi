@@ -1,4 +1,5 @@
 import getpass
+from time import sleep
 
 userDatabase = {}
 chatHistory = {}
@@ -6,6 +7,7 @@ userSessions = {}
 
 
 def clearScreen():
+    sleep(3)
     print('\033c')
 
 
@@ -96,7 +98,10 @@ if __name__ == "__main__":
         elif choice == '3' and currentUser:
             receiver = input("Enter the recipient's username: ")
             message = input('Enter your message: ')
-            sendMessage(currentUser, receiver, message)
+            if currentUser != receiver:
+                sendMessage(currentUser, receiver, message)
+            else:
+                print("You cannot send message to yourself")
         elif choice == '4' and currentUser:
             displayChat(currentUser)
         elif choice == '5' and currentUser:

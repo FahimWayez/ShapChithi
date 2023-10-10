@@ -1,9 +1,11 @@
 import getpass
+import hashlib
 from time import sleep
 
 userDatabase = {}
 chatHistory = {}
 userSessions = {}
+credentials = 'credentials.txt'
 
 def clearScreen():
     sleep(1.5)
@@ -14,21 +16,48 @@ def shundorHeader():
     print('Shap Chithi')
     print('='*40, end="\n")
 
+def writeCredentials(userName, password):
+    with open(credentials, 'a') as file:
+        file.write(f'{userName}:{password}\n')
+
+def readCredentials():
+    try:
+        with open(credentials, 'r') as file:
+            lines = file.readlines()
+            for line in lines:
+                userName, password = line.strip().split(':')
+                userDatabase[userName] = password
+    except FileNotFoundError:
+        pass          
+        
 def register():
     clearScreen()
     shundorHeader()
     print("Registration Portal")
     print('='*40, end="\n")
     userName = input("Please enter your username: ")
+    
+    if userName in userDatabase:
+        print("Username already exists. Registration failed.")
+        return
+    
     password = getpass.getpass("Please enter a password: ")
     cPassword = getpass.getpass("Confirm your password: ")
 
     if password != cPassword:
         print("Passwords do not match, please try again.")
         return
-    userDatabase[userName] = password
+    
+    hashedPassword = hashlib.sha256(password.encode()).hexdigest()
+    userDatabase[userName] = hashedPassword
+    
+    writeCredentials(userName, hashedPassword)
+    
     chatHistory[userName] = []
     print("Registration is successful. You have become a python.")
+    
+    # userDatabase[userName] = password
+    # chatHistory[userName] = []
 
 def login():
     clearScreen()
@@ -38,7 +67,7 @@ def login():
     userName = input("Please enter your username: ")
     password = getpass.getpass("Enter your password: ")
 
-    if userName in userDatabase and userDatabase[userName] == password:
+    if userName in userDatabase and userDatabase[userName] == hashlib.sha256(password.encode()).hexdigest():
         print("Congratulations! Login successful.")
         return userName
     else:
@@ -74,6 +103,8 @@ def displayChat(userName):
     input("\nPress Enter to continue...")
 
 if __name__ == "__main__":
+    readCredentials()
+    
     currentUser = None
     while True:
         clearScreen()
@@ -121,3 +152,4 @@ if __name__ == "__main__":
             else:
                 print("Invalid input. Please enter y or n only.")
         else: print("Invalid choice, please try again.")
+        

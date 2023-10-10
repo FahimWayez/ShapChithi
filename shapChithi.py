@@ -7,7 +7,7 @@ userSessions = {}
 
 
 def clearScreen():
-    sleep(3)
+    sleep(1.5)
     print('\033c')
 
 
@@ -116,4 +116,3 @@ if __name__ == "__main__":
                 pass
             else: print("Invalid input. Please enter y or n only.")
         else: print("Invalid choice, please try again.")
-        

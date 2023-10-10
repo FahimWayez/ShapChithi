@@ -112,7 +112,6 @@ def login():
         print("Invalid username or password. Please try again.")
     return None
 
-
 def logout(userName):
     clearScreen()
     shundorHeader()
@@ -140,7 +139,39 @@ def displayChat(userName):
     else:
         print("You have no chat history to be shown")
     input("\nPress Enter to continue...")
+    
 
+def deleteMessage(userName):
+    clearScreen()
+    shundorHeader()
+    print("Delete Message")
+    print('='*40, end='\n')
+    print('1. Delete All Messages')
+    print('2. Delete Messages with a specific user')
+    choice = input('Please enter your choice: ')
+    
+    if choice == '1':
+        deleteChoice = input('You sure want to delete? (Y/N): ')  
+        if deleteChoice.lower() == 'y':  
+            chatHistory[userName] = []
+            print('All messages deleted successfully.')
+        elif deleteChoice.lower() == 'n':
+            pass
+        else: print('Invalid input. Please enter y or n only.')
+    
+    elif choice == '2': 
+        targetUser = input('Enter the username of the user you want to delete the messages: ')
+        
+        deleteChoice = input('You sure want to delete? (Y/N): ')
+        if deleteChoice.lower() == 'y':
+            chatHistory[userName] = [message for message in chatHistory[userName] if targetUser not in message]
+            print(f'Messages with {targetUser} deleted successfully.')
+        elif deleteChoice.lower() == 'n':
+            pass
+        else:
+            print('Invalid input. Please enter y or n only.')
+    
+    else: print('Invalid choice')
 
 if __name__ == "__main__":
     readCredentials()
@@ -160,9 +191,12 @@ if __name__ == "__main__":
             print("\nOptions: ")
             print("3. Send message")
             print("4. Display messages")
-            print("5. Logout")
+            print("5. Delete messages")
+            print("6. Update messages")
+            print("7. Search messages")
+            print("8. Logout")
 
-        print("6. Exit")
+        print("9. Exit")
 
         choice = input("Please enter a choice: ")
 
@@ -188,9 +222,17 @@ if __name__ == "__main__":
             input('\nPress enter to continue...')
             # displayChat(currentUser)
         elif choice == '5' and currentUser:
+            deleteMessage(currentUser)
+        elif choice == '6' and currentUser:
+            # updateMessage(currentUser)
+            pass
+        elif choice == '7' and currentUser:
+            # searchMessages(currentUser)
+            pass
+        elif choice == '8' and currentUser:
             logout(currentUser)
             currentUser = None
-        elif choice == '6':
+        elif choice == '9':
             exitChoice = input("You sure want to exit? (Y/N): ")
             if exitChoice.lower() == 'y':
                 print("Goodbye tata Allah Hafiz")
@@ -201,6 +243,3 @@ if __name__ == "__main__":
                 print("Invalid input. Please enter y or n only.")
         else:
             print("Invalid choice, please try again.")
-
-
-# Rgistr kaj kortsna, amar kyboard o

@@ -7,7 +7,7 @@ userDatabase = {}
 chatHistory = {}
 userSessions = {}
 credentials = 'credentials.txt'
-chatHistory = 'chatHistory'
+chatHistoryDir = 'chatHistory'
 
 
 def clearScreen():
@@ -38,23 +38,27 @@ def readCredentials():
 
 
 def createUserDirectory(userName):
-    userDirectory = os.path.join(chatHistory, userName)
+    userDirectory = os.path.join(chatHistoryDir, userName)
     os.makedirs(userDirectory, exist_ok=True)
 
 
 def writeMessage(userName, receiver, message):
-    senderFile = os.path.join(chatHistory, userName, f'{receiver}.txt')
+    senderFile = os.path.join(chatHistoryDir, userName, f'{receiver}.txt')
+    receiverFile = os.path.join(chatHistoryDir, receiver, f'{userName}.txt')
+    
+    os.makedirs(os.path.dirname(senderFile), exist_ok=True)
+    os.makedirs(os.path.dirname(receiverFile), exist_ok=True)
+    
     with open(senderFile, 'a') as file:
         file.write(f'You to {receiver}:{message}\n')
 
-    receiverFile = os.path.join(chatHistory, receiver, f'{userName}.txt')
     with open(receiverFile, 'a') as file:
         file.write(f'{userName}:{message}\n')
 
 
 def readChat(userName):
     chatHistory = []
-    userDirectory = os.path.join(chatHistory, userName)
+    userDirectory = os.path.join(chatHistoryDir, userName)
     if os.path.exists(userDirectory):
         chatFiles = os.listdir(userDirectory)
         for chatFile in chatFiles:
@@ -62,8 +66,6 @@ def readChat(userName):
             with open(filePath, 'r') as file:
                 chatHistory.extend(file.readlines())
     return chatHistory
-# ///////////////////////////////
-
 
 def register():
     clearScreen()
@@ -143,7 +145,7 @@ def displayChat(userName):
 if __name__ == "__main__":
     readCredentials()
 
-    os.makedirs(chatHistory, exist_ok=True)
+    os.makedirs(chatHistoryDir, exist_ok=True)
 
     currentUser = None
     while True:

@@ -1,11 +1,13 @@
 import getpass
 import hashlib
+import os
 from time import sleep
 
 userDatabase = {}
 chatHistory = {}
 userSessions = {}
 credentials = 'credentials.txt'
+chatHistory = 'chatHistory'
 
 def clearScreen():
     sleep(1.5)
@@ -28,36 +30,63 @@ def readCredentials():
                 userName, password = line.strip().split(':')
                 userDatabase[userName] = password
     except FileNotFoundError:
-        pass          
-        
+        pass
+
+def createUserDirectory(userName):
+    userDirectory = os.path.join(chatHistory, userName)
+    os.makedirs(userDirectory, exist_ok=True)
+    
+def writeMessage(userName, receiver, message):
+    senderFile = os.path.join(chatHistory, userName, f'{receiver}.txt')
+    with open(senderFile, 'a') as file:
+        file.write(f'You to {receiver}:{message}\n')
+    
+    receiverFile = os.path.join(chatHistory, receiver, f'{userName}.txt')
+    with open(receiverFile, 'a') as file:
+        file.write(f'{userName}:{message}\n')
+    
+def readChat(userName):
+    chatHistory = []
+    userDirectory = os.path.join(chatHistory, userName)
+    if os.path.exists(userDirectory):
+        chatFiles = os.listdir(userDirectory)
+        for chatFile in chatFiles:
+            filePath = os.path.join(userDirectory, chatFile)
+            with open(filePath, 'r') as file:
+                chatHistory.extend(file.readlines())
+    return chatHistory
+# ///////////////////////////////
+
+
 def register():
     clearScreen()
     shundorHeader()
     print("Registration Portal")
     print('='*40, end="\n")
     userName = input("Please enter your username: ")
-    
+
     if userName in userDatabase:
         print("Username already exists. Registration failed.")
         return
-    
+
     password = getpass.getpass("Please enter a password: ")
     cPassword = getpass.getpass("Confirm your password: ")
 
     if password != cPassword:
         print("Passwords do not match, please try again.")
         return
-    
+
     hashedPassword = hashlib.sha256(password.encode()).hexdigest()
     userDatabase[userName] = hashedPassword
-    
+
     writeCredentials(userName, hashedPassword)
-    
+
     chatHistory[userName] = []
     print("Registration is successful. You have become a python.")
-    
+
     # userDatabase[userName] = password
     # chatHistory[userName] = []
+
 
 def login():
     clearScreen()
@@ -73,6 +102,7 @@ def login():
     else:
         print("Invalid username or password. Please try again.")
     return None
+
 
 def logout(userName):
     clearScreen()
@@ -102,9 +132,12 @@ def displayChat(userName):
         print("You have no chat history to be shown")
     input("\nPress Enter to continue...")
 
+
 if __name__ == "__main__":
     readCredentials()
     
+    os.makedirs(chatHistory, exist_ok=True)
+
     currentUser = None
     while True:
         clearScreen()
@@ -130,15 +163,21 @@ if __name__ == "__main__":
             currentUser = login()
             if currentUser:
                 userSessions[currentUser] = True
+                createUserDirectory(currentUser)
         elif choice == '3' and currentUser:
             receiver = input("Enter the recipient's username: ")
             message = input('Enter your message: ')
             if currentUser != receiver:
                 sendMessage(currentUser, receiver, message)
+                writeMessage(currentUser, receiver, message)
             else:
                 print("You cannot send message to yourself")
         elif choice == '4' and currentUser:
-            displayChat(currentUser)
+            chatHistory = readChat(currentUser)
+            for message in chatHistory:
+                print(message.strip())
+            input('\nPress enter to continue...')
+            # displayChat(currentUser)
         elif choice == '5' and currentUser:
             logout(currentUser)
             currentUser = None
@@ -151,5 +190,6 @@ if __name__ == "__main__":
                 pass
             else:
                 print("Invalid input. Please enter y or n only.")
-        else: print("Invalid choice, please try again.")
+        else:
+            print("Invalid choice, please try again.")
         

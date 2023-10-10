@@ -9,22 +9,18 @@ userSessions = {}
 credentials = 'credentials.txt'
 chatHistoryDir = 'chatHistory'
 
-
 def clearScreen():
     sleep(1.5)
     print('\033c')
-
 
 def shundorHeader():
     print('='*40, end="\n")
     print('Shap Chithi')
     print('='*40, end="\n")
 
-
 def writeCredentials(userName, password):
     with open(credentials, 'a') as file:
         file.write(f'{userName}:{password}\n')
-
 
 def readCredentials():
     try:
@@ -36,11 +32,9 @@ def readCredentials():
     except FileNotFoundError:
         pass
 
-
 def createUserDirectory(userName):
     userDirectory = os.path.join(chatHistoryDir, userName)
     os.makedirs(userDirectory, exist_ok=True)
-
 
 def writeMessage(userName, receiver, message):
     senderFile = os.path.join(chatHistoryDir, userName, f'{receiver}.txt')
@@ -54,7 +48,6 @@ def writeMessage(userName, receiver, message):
 
     with open(receiverFile, 'a') as file:
         file.write(f'{userName}:{message}\n')
-
 
 def readChat(userName):
     chatHistory = []
@@ -96,7 +89,6 @@ def register():
     # userDatabase[userName] = password
     # chatHistory[userName] = []
 
-
 def login():
     clearScreen()
     shundorHeader()
@@ -121,14 +113,12 @@ def logout(userName):
     else:
         print("Not logged in")  # eta shoray dite hobe pore
 
-
 def sendMessage(sender, receiver, message):
     if receiver in chatHistory:
         chatHistory[receiver].append(f"{sender}: {message}")
         chatHistory[sender].append(f"You to {receiver}: {message}")
     else:
         print("Invalid recipient")
-
 
 def displayChat(userName):
     clearScreen()
@@ -153,8 +143,16 @@ def deleteMessage(userName):
     if choice == '1':
         deleteChoice = input('You sure want to delete? (Y/N): ')  
         if deleteChoice.lower() == 'y':  
-            chatHistory[userName] = []
+            chatHistory[userName] = [] #current user theke hisotry delete kortesi
+            
+            userDirectory = os.path.join(chatHistoryDir, userName) #text file delete kortesi
+            if os.path.exists(userDirectory):
+                for fileName in os.listdir(userDirectory):
+                    filePath = os.path.join(userDirectory, fileName)
+                    os.remove(filePath)
+                    
             print('All messages deleted successfully.')
+            
         elif deleteChoice.lower() == 'n':
             pass
         else: print('Invalid input. Please enter y or n only.')
@@ -163,9 +161,19 @@ def deleteMessage(userName):
         targetUser = input('Enter the username of the user you want to delete the messages: ')
         
         deleteChoice = input('You sure want to delete? (Y/N): ')
+        
         if deleteChoice.lower() == 'y':
-            chatHistory[userName] = [message for message in chatHistory[userName] if targetUser not in message]
+            chatHistory[userName] = [message for message in chatHistory[userName] if targetUser not in message] #memory theke delete kortesi
+            
+            userDirectory = os.path.join(chatHistoryDir, userName) #text file theke delete
+            if os.path.exists(userDirectory):
+                for fileName in os.listdir(userDirectory):
+                    if targetUser in fileName:
+                        filePath = os.path.join(userDirectory, fileName)
+                        os.remove(filePath)
+                        
             print(f'Messages with {targetUser} deleted successfully.')
+            
         elif deleteChoice.lower() == 'n':
             pass
         else:

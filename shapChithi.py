@@ -199,3 +199,6 @@ if __name__ == "__main__":
                 print("Invalid input. Please enter y or n only.")
         else:
             print("Invalid choice, please try again.")
+
+
+# Rgistr kaj kortsna, amar kyboard o

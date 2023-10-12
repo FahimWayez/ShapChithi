@@ -181,6 +181,42 @@ def deleteMessage(userName):
     
     else: print('Invalid choice')
 
+def searchUser(keyword, currentUser):
+    matchingUsers = [user for user in userDatabase.keys() if keyword.lower() in user.lower()]
+    return matchingUsers
+
+def initiateChat(currentUser):
+    clearScreen()
+    shundorHeader()
+    print('Search for user')
+    print('='*40,end='\n')
+    keyword = input("Search for user with name: ")
+    
+    matchingUsers = searchUser(keyword)
+    
+    if matchingUsers:
+        print('Found users: ')
+        for i, user in enumerate(matchingUsers, start = 1):
+            print(f'{i}.{user}')
+        
+        try:
+            choice = int(input('Choose an option: '))
+            if choice == 0: return
+            elif 1 <= choice <= len(matchingUsers):
+                chatWith = matchingUsers[choice - 1]
+                message = input(f'Chat with {chatWith}: ')
+                sendMessage(currentUser,chatWith, message)
+                writeMessage(currentUser, chatWith, message)
+                print(f'You are now chatting with {chatWith}')
+                input('Press enter to continue...')
+            
+            else: print('Invalid choice')
+        
+        except ValueError: print('Invalid input.')
+    else: 
+        print('No users found.')
+        input('Press enter to continue...')               
+    
 if __name__ == "__main__":
     readCredentials()
 
@@ -197,11 +233,10 @@ if __name__ == "__main__":
         else:
             print(f"Logged in as {currentUser}")
             print("\nOptions: ")
-            print("3. Send message")
+            print("3. Search user to send message")
             print("4. Display messages")
             print("5. Delete messages")
             print("6. Update messages")
-            print("7. Search messages")
             print("8. Logout")
 
         print("9. Exit")
@@ -216,13 +251,14 @@ if __name__ == "__main__":
                 userSessions[currentUser] = True
                 createUserDirectory(currentUser)
         elif choice == '3' and currentUser:
-            receiver = input("Enter the recipient's username: ")
-            message = input('Enter your message: ')
-            if currentUser != receiver:
-                sendMessage(currentUser, receiver, message)
-                writeMessage(currentUser, receiver, message)
-            else:
-                print("You cannot send message to yourself")
+            initiateChat(currentUser)
+            # receiver = input("Enter the recipient's username: ")
+            # message = input('Enter your message: ')
+            # if currentUser != receiver:
+            #     sendMessage(currentUser, receiver, message)
+            #     writeMessage(currentUser, receiver, message)
+            # else:
+            #     print("You cannot send message to yourself")
         elif choice == '4' and currentUser:
             chatHistory = readChat(currentUser)
             for message in chatHistory:
@@ -235,7 +271,6 @@ if __name__ == "__main__":
             # updateMessage(currentUser)
             pass
         elif choice == '7' and currentUser:
-            # searchMessages(currentUser)
             pass
         elif choice == '8' and currentUser:
             logout(currentUser)

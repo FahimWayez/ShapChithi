@@ -135,18 +135,6 @@ def sendMessage(sender, receiver, message):
     
     writeMessage(sender, receiver, message)
 
-
-def displayChat(userName):
-    clearScreen()
-    shundorHeader()
-    if userName in chatHistory:
-        for message in chatHistory[userName]:
-            print(message)
-    else:
-        print("You have no chat history to be shown")
-    input("\nPress Enter to continue...")
-
-
 def deleteMessage(userName):
     clearScreen()
     shundorHeader()
@@ -158,11 +146,9 @@ def deleteMessage(userName):
 
     if choice == "1":
         deleteChoice = input("You sure want to delete? (Y/N): ")
-        if deleteChoice.lower() == "y":
-            # current user theke hisotry delete kortesi
+        if deleteChoice.lower() == "y":        
             chatHistory[userName] = []
 
-            # text file delete kortesi
             userDirectory = os.path.join(chatHistoryDir, userName)
             if os.path.exists(userDirectory):
                 for fileName in os.listdir(userDirectory):
@@ -177,23 +163,23 @@ def deleteMessage(userName):
             print("Invalid input. Please enter y or n only.")
 
     elif choice == "2":
-        targetUser = input(
+        receiver = input(
             "Enter the username of the user you want to delete the messages: ")
 
         deleteChoice = input("You sure want to delete? (Y/N): ")
 
         if deleteChoice.lower() == "y":
-            chatHistory[userName] = [message for message in chatHistory[userName] if targetUser not in message]  # memory theke delete kortesi
+            chatHistory[userName] = [message for message in chatHistory[userName] if receiver not in message]  # memory theke delete kortesi
 
             userDirectory = os.path.join(
                 chatHistoryDir, userName)  # text file theke delete
             if os.path.exists(userDirectory):
                 for fileName in os.listdir(userDirectory):
-                    if targetUser in fileName:
+                    if receiver in fileName:
                         filePath = os.path.join(userDirectory, fileName)
                         os.remove(filePath)
 
-            print(f"Messages with {targetUser} deleted successfully.")
+            print(f"Messages with {receiver} deleted successfully.")
 
         elif deleteChoice.lower() == "n":
             pass
@@ -208,6 +194,25 @@ def searchUser(keyword, currentUser):
     matchingUsers = [user for user in userDatabase.keys() if keyword.lower() in user.lower() and user != currentUser]
     return matchingUsers
 
+def displayChatHistory(currentUser, targetUser):
+    clearScreen()
+    shundorHeader()
+    print(f"Chat history with {targetUser}")
+    print("="*40, end = "\n")
+    
+    if currentUser in chatHistory and targetUser in chatHistory:
+        currentUserChat = chatHistory[currentUser]
+        targetUserChat = chatHistory[targetUser]
+        
+        targetUserMessages = [msg for msg in currentUserChat if targetUser in msg or currentUser in msg]
+        
+        for message in targetUserMessages:
+            print(message)
+                    
+    else: print(f"No chat history found between {currentUser} and {targetUser}")
+    
+    input("\nPress enter to continue...")
+    
 def initiateChat(currentUser):
     clearScreen()
     shundorHeader()
@@ -231,8 +236,7 @@ def initiateChat(currentUser):
                 if choice == 0:
                     break
                 elif 1 <= choice <= len(matchingUsers):
-                    receiver = matchingUsers[choice - 1]
-                    
+                    receiver = matchingUsers[choice - 1]                            
                     while True:
                         message = input(f"Chat with {receiver} (type 'quit' to exit): ")
                         if message.lower() == "quit": break
@@ -250,6 +254,42 @@ def initiateChat(currentUser):
             print("No users found.")
             input("Press enter to continue...")
 
+def displayChat(currentUser):
+    clearScreen()
+    shundorHeader()
+    print("Search for user")
+    print("="*40, end="\n")
+
+    while True:
+        keyword = input("Search for user with name (or type 'quit' to exit): ")
+
+        if keyword.lower() == "quit":
+            break
+
+        matchingUsers = searchUser(keyword, currentUser)
+
+        if matchingUsers:
+            print("Found users: ")
+            for i, user in enumerate(matchingUsers, start=1):
+                print(f"{i}.{user}")
+
+            try:
+                choice = int(
+                    input("Choose an option (or type '0' to go back): "))
+                if choice == 0:
+                    break
+                elif 1 <= choice <= len(matchingUsers):
+                    receiver = matchingUsers[choice - 1]
+                    displayChatHistory(currentUser, receiver)
+
+                else:
+                    print("Invalid choice")
+
+            except ValueError:
+                print("Invalid input.")
+        else:
+            print("No users found.")
+            input("Press enter to continue...")
 
 if __name__ == "__main__":
     readCredentials()
@@ -268,9 +308,9 @@ if __name__ == "__main__":
             print(f"Logged in as {currentUser}")
             print("\nOptions: ")
             print("3. Search user to send message")
-            print("4. Display messages")
+            print("4. Search user to display messages")
             print("5. Delete messages")
-            print("6. Update messages")
+            print("6. Update profile")
             print("8. Logout")
 
         print("9. Exit")
@@ -287,15 +327,10 @@ if __name__ == "__main__":
         elif choice == "3" and currentUser:
             initiateChat(currentUser)
         elif choice == "4" and currentUser:
-            chatHistory = readChat(currentUser)
-            for message in chatHistory:
-                print(message.strip())
-            input("\nPress enter to continue...")
-            # displayChat(currentUser)
+            displayChat(currentUser)
         elif choice == "5" and currentUser:
             deleteMessage(currentUser)
         elif choice == "6" and currentUser:
-            # updateMessage(currentUser)
             pass
         elif choice == "7" and currentUser:
             pass

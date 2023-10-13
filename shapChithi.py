@@ -9,17 +9,14 @@ userSessions = {}
 credentials = "credentials.txt"
 chatHistoryDir = "chatHistory"
 
-
 def clearScreen():
     sleep(1.5)
     print("\033c")
-
 
 def shundorHeader():
     print("="*40, end="\n")
     print("Shap Chithi")
     print("="*40, end="\n")
-
 
 def writeCredentials(userName, password):
     with open(credentials, "a") as file:
@@ -40,11 +37,9 @@ def readCredentials():
     except FileNotFoundError:
         pass
 
-
 def createUserDirectory(userName):
     userDirectory = os.path.join(chatHistoryDir, userName)
     os.makedirs(userDirectory, exist_ok=True)
-
 
 def writeMessage(userName, receiver, message):
     senderFile = os.path.join(chatHistoryDir, userName, f"{receiver}.txt")
@@ -59,7 +54,6 @@ def writeMessage(userName, receiver, message):
     with open(receiverFile, "a") as file:
         file.write(f"{userName}:{message}\n")
 
-
 def readChat(userName):
     chatHistory = []
     userDirectory = os.path.join(chatHistoryDir, userName)
@@ -70,7 +64,6 @@ def readChat(userName):
             with open(filePath, "r") as file:
                 chatHistory.extend(file.readlines())
     return chatHistory
-
 
 def register():
     clearScreen()
@@ -97,11 +90,7 @@ def register():
 
     chatHistory[userName] = []
     print("Registration is successful. You have become a python.")
-
-    # userDatabase[userName] = password
-    # chatHistory[userName] = []
-
-
+    
 def login():
     clearScreen()
     shundorHeader()
@@ -133,67 +122,15 @@ def sendMessage(sender, receiver, message):
     else:
         chatHistory[receiver] = [f"{sender}: {message}"]
         
-    chatHistory[sender].append(f"You to {receiver}: {message}")
-    
+    if sender in chatHistory:
+        chatHistory[sender].append(f"You to {receiver}: {message}")
+    else:
+        chatHistory[sender] = [f"{receiver}: {message}"]
+        
+        
+    writeMessage(sender, receiver, message)
     print(f"Message sent to {receiver}")
     
-    writeMessage(sender, receiver, message)
-
-def deleteMessage(userName):
-    clearScreen()
-    shundorHeader()
-    print("Delete Message")
-    print("="*40, end="\n")
-    print("1. Delete All Messages")
-    print("2. Delete Messages with a specific user")
-    choice = input("Please enter your choice: ")
-
-    if choice == "1":
-        deleteChoice = input("You sure want to delete? (Y/N): ")
-        if deleteChoice.lower() == "y":        
-            chatHistory[userName] = []
-
-            userDirectory = os.path.join(chatHistoryDir, userName)
-            if os.path.exists(userDirectory):
-                for fileName in os.listdir(userDirectory):
-                    filePath = os.path.join(userDirectory, fileName)
-                    os.remove(filePath)
-
-            print("All messages deleted successfully.")
-
-        elif deleteChoice.lower() == "n":
-            pass
-        else:
-            print("Invalid input. Please enter y or n only.")
-
-    elif choice == "2":
-        receiver = input(
-            "Enter the username of the user you want to delete the messages: ")
-
-        deleteChoice = input("You sure want to delete? (Y/N): ")
-
-        if deleteChoice.lower() == "y":
-            chatHistory[userName] = [message for message in chatHistory[userName] if receiver not in message]  # memory theke delete kortesi
-
-            userDirectory = os.path.join(
-                chatHistoryDir, userName)  # text file theke delete
-            if os.path.exists(userDirectory):
-                for fileName in os.listdir(userDirectory):
-                    if receiver in fileName:
-                        filePath = os.path.join(userDirectory, fileName)
-                        os.remove(filePath)
-
-            print(f"Messages with {receiver} deleted successfully.")
-
-        elif deleteChoice.lower() == "n":
-            pass
-        else:
-            print("Invalid input. Please enter y or n only.")
-
-    else:
-        print("Invalid choice")
-
-
 def searchUser(keyword, currentUser):
     matchingUsers = [user for user in userDatabase.keys() if keyword.lower() in user.lower() and user != currentUser]
     return matchingUsers
@@ -294,6 +231,62 @@ def displayChat(currentUser):
         else:
             print("No users found.")
             input("Press enter to continue...")
+            
+
+def deleteMessage(userName):
+    clearScreen()
+    shundorHeader()
+    print("Delete Message")
+    print("="*40, end="\n")
+    print("1. Delete All Messages")
+    print("2. Delete Messages with a specific user")
+    choice = input("Please enter your choice: ")
+
+    if choice == "1":
+        deleteChoice = input("You sure want to delete? (Y/N): ")
+        if deleteChoice.lower() == "y":
+            chatHistory[userName] = []
+
+            userDirectory = os.path.join(chatHistoryDir, userName)
+            if os.path.exists(userDirectory):
+                for fileName in os.listdir(userDirectory):
+                    filePath = os.path.join(userDirectory, fileName)
+                    os.remove(filePath)
+
+            print("All messages deleted successfully.")
+
+        elif deleteChoice.lower() == "n":
+            pass
+        else:
+            print("Invalid input. Please enter y or n only.")
+
+    elif choice == "2":
+        receiver = input("Enter the username of the user you want to delete the messages: ")
+
+        deleteChoice = input("You sure want to delete? (Y/N): ")
+
+        if deleteChoice.lower() == "y":
+            chatHistory[userName] = [message for message in chatHistory[userName] if receiver not in message]  # memory theke delete kortesi
+
+            userDirectory = os.path.join(
+                chatHistoryDir, userName)  # text file theke delete
+            if os.path.exists(userDirectory):
+                for fileName in os.listdir(userDirectory):
+                    if receiver in fileName:
+                        filePath = os.path.join(userDirectory, fileName)
+                        os.remove(filePath)
+
+            print(f"Messages with {receiver} deleted successfully.")
+
+        elif deleteChoice.lower() == "n":
+            pass
+        else:
+            print("Invalid input. Please enter y or n only.")
+
+    else:
+        print("Invalid choice")
+
+
 def updateProfile(userName):
     clearScreen()
     shundorHeader()

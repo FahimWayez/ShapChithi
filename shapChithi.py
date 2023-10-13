@@ -54,17 +54,6 @@ def writeMessage(userName, receiver, message):
     with open(receiverFile, "a") as file:
         file.write(f"{userName}:{message}\n")
 
-def readChat(userName):
-    chatHistory = []
-    userDirectory = os.path.join(chatHistoryDir, userName)
-    if os.path.exists(userDirectory):
-        chatFiles = os.listdir(userDirectory)
-        for chatFile in chatFiles:
-            filePath = os.path.join(userDirectory, chatFile)
-            with open(filePath, "r") as file:
-                chatHistory.extend(file.readlines())
-    return chatHistory
-
 def register():
     clearScreen()
     shundorHeader()
@@ -113,7 +102,7 @@ def logout(userName):
         del userSessions[userName]
         print("Logout Successful")
     else:
-        print("Not logged in")  # eta shoray dite hobe pore
+        print("Not logged in")  
 
 
 def sendMessage(sender, receiver, message):

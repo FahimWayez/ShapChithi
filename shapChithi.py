@@ -6,32 +6,32 @@ from time import sleep
 userDatabase = {}
 chatHistory = {}
 userSessions = {}
-credentials = 'credentials.txt'
-chatHistoryDir = 'chatHistory'
+credentials = "credentials.txt"
+chatHistoryDir = "chatHistory"
 
 
 def clearScreen():
     sleep(1.5)
-    print('\033c')
+    print("\033c")
 
 
 def shundorHeader():
-    print('='*40, end="\n")
-    print('Shap Chithi')
-    print('='*40, end="\n")
+    print("="*40, end="\n")
+    print("Shap Chithi")
+    print("="*40, end="\n")
 
 
 def writeCredentials(userName, password):
-    with open(credentials, 'a') as file:
-        file.write(f'{userName}:{password}\n')
+    with open(credentials, "a") as file:
+        file.write(f"{userName}:{password}\n")
 
 
 def readCredentials():
     try:
-        with open(credentials, 'r') as file:
+        with open(credentials, "r") as file:
             lines = file.readlines()
             for line in lines:
-                userName, password = line.strip().split(':')
+                userName, password = line.strip().split(":")
                 userDatabase[userName] = password
     except FileNotFoundError:
         pass
@@ -43,17 +43,17 @@ def createUserDirectory(userName):
 
 
 def writeMessage(userName, receiver, message):
-    senderFile = os.path.join(chatHistoryDir, userName, f'{receiver}.txt')
-    receiverFile = os.path.join(chatHistoryDir, receiver, f'{userName}.txt')
+    senderFile = os.path.join(chatHistoryDir, userName, f"{receiver}.txt")
+    receiverFile = os.path.join(chatHistoryDir, receiver, f"{userName}.txt")
 
     os.makedirs(os.path.dirname(senderFile), exist_ok=True)
     os.makedirs(os.path.dirname(receiverFile), exist_ok=True)
 
-    with open(senderFile, 'a') as file:
-        file.write(f'You to {receiver}:{message}\n')
+    with open(senderFile, "a") as file:
+        file.write(f"You to {receiver}:{message}\n")
 
-    with open(receiverFile, 'a') as file:
-        file.write(f'{userName}:{message}\n')
+    with open(receiverFile, "a") as file:
+        file.write(f"{userName}:{message}\n")
 
 
 def readChat(userName):
@@ -63,7 +63,7 @@ def readChat(userName):
         chatFiles = os.listdir(userDirectory)
         for chatFile in chatFiles:
             filePath = os.path.join(userDirectory, chatFile)
-            with open(filePath, 'r') as file:
+            with open(filePath, "r") as file:
                 chatHistory.extend(file.readlines())
     return chatHistory
 
@@ -72,7 +72,7 @@ def register():
     clearScreen()
     shundorHeader()
     print("Registration Portal")
-    print('='*40, end="\n")
+    print("="*40, end="\n")
     userName = input("Please enter your username: ")
 
     if userName in userDatabase:
@@ -102,7 +102,7 @@ def login():
     clearScreen()
     shundorHeader()
     print("Login Portal")
-    print('='*40, end="\n")
+    print("="*40, end="\n")
     userName = input("Please enter your username: ")
     password = getpass.getpass("Enter your password: ")
 
@@ -112,7 +112,6 @@ def login():
     else:
         print("Invalid username or password. Please try again.")
     return None
-
 
 def logout(userName):
     clearScreen()
@@ -127,9 +126,14 @@ def logout(userName):
 def sendMessage(sender, receiver, message):
     if receiver in chatHistory:
         chatHistory[receiver].append(f"{sender}: {message}")
-        chatHistory[sender].append(f"You to {receiver}: {message}")
     else:
-        print("Invalid recipient")
+        chatHistory[receiver] = [f"{sender}: {message}"]
+        
+    chatHistory[sender].append(f"You to {receiver}: {message}")
+    
+    print(f"Message sent to {receiver}")
+    
+    writeMessage(sender, receiver, message)
 
 
 def displayChat(userName):
@@ -147,14 +151,14 @@ def deleteMessage(userName):
     clearScreen()
     shundorHeader()
     print("Delete Message")
-    print('='*40, end='\n')
-    print('1. Delete All Messages')
-    print('2. Delete Messages with a specific user')
-    choice = input('Please enter your choice: ')
+    print("="*40, end="\n")
+    print("1. Delete All Messages")
+    print("2. Delete Messages with a specific user")
+    choice = input("Please enter your choice: ")
 
-    if choice == '1':
-        deleteChoice = input('You sure want to delete? (Y/N): ')
-        if deleteChoice.lower() == 'y':
+    if choice == "1":
+        deleteChoice = input("You sure want to delete? (Y/N): ")
+        if deleteChoice.lower() == "y":
             # current user theke hisotry delete kortesi
             chatHistory[userName] = []
 
@@ -165,22 +169,21 @@ def deleteMessage(userName):
                     filePath = os.path.join(userDirectory, fileName)
                     os.remove(filePath)
 
-            print('All messages deleted successfully.')
+            print("All messages deleted successfully.")
 
-        elif deleteChoice.lower() == 'n':
+        elif deleteChoice.lower() == "n":
             pass
         else:
-            print('Invalid input. Please enter y or n only.')
+            print("Invalid input. Please enter y or n only.")
 
-    elif choice == '2':
+    elif choice == "2":
         targetUser = input(
-            'Enter the username of the user you want to delete the messages: ')
+            "Enter the username of the user you want to delete the messages: ")
 
-        deleteChoice = input('You sure want to delete? (Y/N): ')
+        deleteChoice = input("You sure want to delete? (Y/N): ")
 
-        if deleteChoice.lower() == 'y':
-            chatHistory[userName] = [message for message in chatHistory[userName]
-                                     if targetUser not in message]  # memory theke delete kortesi
+        if deleteChoice.lower() == "y":
+            chatHistory[userName] = [message for message in chatHistory[userName] if targetUser not in message]  # memory theke delete kortesi
 
             userDirectory = os.path.join(
                 chatHistoryDir, userName)  # text file theke delete
@@ -190,57 +193,62 @@ def deleteMessage(userName):
                         filePath = os.path.join(userDirectory, fileName)
                         os.remove(filePath)
 
-            print(f'Messages with {targetUser} deleted successfully.')
+            print(f"Messages with {targetUser} deleted successfully.")
 
-        elif deleteChoice.lower() == 'n':
+        elif deleteChoice.lower() == "n":
             pass
         else:
-            print('Invalid input. Please enter y or n only.')
+            print("Invalid input. Please enter y or n only.")
 
     else:
-        print('Invalid choice')
+        print("Invalid choice")
 
 
 def searchUser(keyword, currentUser):
-    matchingUsers = [user for user in userDatabase.keys(
-    ) if keyword.lower() in user.lower() and user != currentUser]
+    matchingUsers = [user for user in userDatabase.keys() if keyword.lower() in user.lower() and user != currentUser]
     return matchingUsers
-
 
 def initiateChat(currentUser):
     clearScreen()
     shundorHeader()
-    print('Search for user')
-    print('='*40, end='\n')
-    keyword = input("Search for user with name: ")
+    print("Search for user")
+    print("="*40, end="\n")
+    
+    while True:
+        keyword = input("Search for user with name (or type 'quit' to exit): ")
+        
+        if keyword.lower() == "quit": break
 
-    matchingUsers = searchUser(keyword, currentUser)
+        matchingUsers = searchUser(keyword, currentUser)
 
-    if matchingUsers:
-        print('Found users: ')
-        for i, user in enumerate(matchingUsers, start=1):
-            print(f'{i}.{user}')
+        if matchingUsers:
+            print("Found users: ")
+            for i, user in enumerate(matchingUsers, start=1):
+                print(f"{i}.{user}")
 
-        try:
-            choice = int(input('Choose an option: '))
-            if choice == 0:
-                return
-            elif 1 <= choice <= len(matchingUsers):
-                chatWith = matchingUsers[choice - 1]
-                message = input(f'Chat with {chatWith}: ')
-                sendMessage(currentUser, chatWith, message)
-                writeMessage(currentUser, chatWith, message)
-                print(f'You are now chatting with {chatWith}')
-                input('Press enter to continue...')
+            try:
+                choice = int(input("Choose an option (or type '0' to go back): "))
+                if choice == 0:
+                    break
+                elif 1 <= choice <= len(matchingUsers):
+                    receiver = matchingUsers[choice - 1]
+                    
+                    while True:
+                        message = input(f"Chat with {receiver} (type 'quit' to exit): ")
+                        if message.lower() == "quit": break
+                        
+                        sendMessage(currentUser, receiver, message)
+                        writeMessage(currentUser, receiver, message)
+                        print("")
 
-            else:
-                print('Invalid choice')
+                else:
+                    print("Invalid choice")
 
-        except ValueError:
-            print('Invalid input.')
-    else:
-        print('No users found.')
-        input('Press enter to continue...')
+            except ValueError:
+                print("Invalid input.")
+        else:
+            print("No users found.")
+            input("Press enter to continue...")
 
 
 if __name__ == "__main__":
@@ -269,44 +277,37 @@ if __name__ == "__main__":
 
         choice = input("Please enter a choice: ")
 
-        if choice == '1' and currentUser is None:
+        if choice == "1" and currentUser is None:
             register()
-        elif choice == '2' and currentUser is None:
+        elif choice == "2" and currentUser is None:
             currentUser = login()
             if currentUser:
                 userSessions[currentUser] = True
                 createUserDirectory(currentUser)
-        elif choice == '3' and currentUser:
+        elif choice == "3" and currentUser:
             initiateChat(currentUser)
-            # receiver = input("Enter the recipient's username: ")
-            # message = input('Enter your message: ')
-            # if currentUser != receiver:
-            #     sendMessage(currentUser, receiver, message)
-            #     writeMessage(currentUser, receiver, message)
-            # else:
-            #     print("You cannot send message to yourself")
-        elif choice == '4' and currentUser:
+        elif choice == "4" and currentUser:
             chatHistory = readChat(currentUser)
             for message in chatHistory:
                 print(message.strip())
-            input('\nPress enter to continue...')
+            input("\nPress enter to continue...")
             # displayChat(currentUser)
-        elif choice == '5' and currentUser:
+        elif choice == "5" and currentUser:
             deleteMessage(currentUser)
-        elif choice == '6' and currentUser:
+        elif choice == "6" and currentUser:
             # updateMessage(currentUser)
             pass
-        elif choice == '7' and currentUser:
+        elif choice == "7" and currentUser:
             pass
-        elif choice == '8' and currentUser:
+        elif choice == "8" and currentUser:
             logout(currentUser)
             currentUser = None
-        elif choice == '9':
+        elif choice == "9":
             exitChoice = input("You sure want to exit? (Y/N): ")
-            if exitChoice.lower() == 'y':
+            if exitChoice.lower() == "y":
                 print("Goodbye tata Allah Hafiz")
                 break
-            elif exitChoice.lower() == 'n':
+            elif exitChoice.lower() == "n":
                 pass
             else:
                 print("Invalid input. Please enter y or n only.")

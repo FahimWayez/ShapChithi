@@ -25,7 +25,11 @@ def writeCredentials(userName, password):
     with open(credentials, "a") as file:
         file.write(f"{userName}:{password}\n")
 
-
+def updateCredentials():
+    with open(credentials, 'w') as file:
+        for userName, password in userDatabase.items():
+            file.write(f"{userName}:{password}\n")
+            
 def readCredentials():
     try:
         with open(credentials, "r") as file:
@@ -290,6 +294,49 @@ def displayChat(currentUser):
         else:
             print("No users found.")
             input("Press enter to continue...")
+def updateProfile(userName):
+    clearScreen()
+    shundorHeader()
+    print("Update Profile")
+    print("=", end = "\n")
+    print("1. Update username")
+    print("2. Update password")
+    choice = input("Please enter your choice: ")
+    
+    if choice == "1":
+        newUserName = input("Please enter your new username: ")
+        
+        if newUserName in userDatabase:
+            print("This username is already in use.")
+        else:
+            userDatabase[newUserName] = userDatabase.pop(userName)
+            
+            oldUserDir = os.path.join(chatHistoryDir, userName)
+            newUserDir = os.path.join(chatHistoryDir, newUserName)
+            os.rename(oldUserDir,newUserDir)
+            
+            userName = newUserName
+            print("Username updated successfully.")
+            
+        updateCredentials()
+            
+    elif choice == "2":
+        newPassword = getpass.getpass("Enter your new password: ")
+        cNewPassword = getpass.getpass("Confirm your new password: ")
+        
+        if newPassword != cNewPassword:
+            print("Passwords do not match.")
+        else:
+            hashedPassword = hashlib.sha256(newPassword.encode()).hexdigest()
+            userDatabase[userName] = hashedPassword
+            writeCredentials(userName, hashedPassword)
+            
+            print("Password updated successfully.")
+            
+        updateCredentials()
+    else: print("Invalid choice")
+    
+    return userName
 
 if __name__ == "__main__":
     readCredentials()
@@ -331,7 +378,7 @@ if __name__ == "__main__":
         elif choice == "5" and currentUser:
             deleteMessage(currentUser)
         elif choice == "6" and currentUser:
-            pass
+            currentUser = updateProfile(currentUser)
         elif choice == "7" and currentUser:
             logout(currentUser)
             currentUser = None

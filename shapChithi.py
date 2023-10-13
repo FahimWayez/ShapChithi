@@ -291,7 +291,7 @@ def updateProfile(userName):
     clearScreen()
     shundorHeader()
     print("Update Profile")
-    print("=", end = "\n")
+    print("="*40, end = "\n")
     print("1. Update username")
     print("2. Update password")
     choice = input("Please enter your choice: ")

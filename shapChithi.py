@@ -311,9 +311,9 @@ if __name__ == "__main__":
             print("4. Search user to display messages")
             print("5. Delete messages")
             print("6. Update profile")
-            print("8. Logout")
+            print("7. Logout")
 
-        print("9. Exit")
+        print("8. Exit")
 
         choice = input("Please enter a choice: ")
 
@@ -333,11 +333,9 @@ if __name__ == "__main__":
         elif choice == "6" and currentUser:
             pass
         elif choice == "7" and currentUser:
-            pass
-        elif choice == "8" and currentUser:
             logout(currentUser)
             currentUser = None
-        elif choice == "9":
+        elif choice == "8":
             exitChoice = input("You sure want to exit? (Y/N): ")
             if exitChoice.lower() == "y":
                 print("Goodbye tata Allah Hafiz")

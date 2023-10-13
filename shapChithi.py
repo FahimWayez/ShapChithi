@@ -334,6 +334,7 @@ def updateProfile(userName):
             print("Password updated successfully.")
             
         updateCredentials()
+        
     else: print("Invalid choice")
     
     return userName

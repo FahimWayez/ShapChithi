@@ -1,6 +1,7 @@
 import getpass
 import hashlib
 import os
+import re
 from time import sleep
 
 userDatabase = {}
@@ -63,6 +64,10 @@ def register():
 
     if userName in userDatabase:
         print("Username already exists. Registration failed.")
+        return
+    
+    if re.search("^[0-9]", userName):
+        print("Your username cannot start with a digit")
         return
 
     password = getpass.getpass("Please enter a password: ")
@@ -320,6 +325,7 @@ def updateProfile(userName):
     else: print("Invalid choice")
     
     return userName
+
 
 if __name__ == "__main__":
     readCredentials()

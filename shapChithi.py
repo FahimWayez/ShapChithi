@@ -10,24 +10,29 @@ userSessions = {}
 credentials = "credentials.txt"
 chatHistoryDir = "chatHistory"
 
+
 def clearScreen():
     sleep(1.5)
     print("\033c")
 
-def shundorHeader():
-    print("="*40, end="\n")
+
+def headerDesign():
+    print("=" * 40, end="\n")
     print("Shap Chithi")
-    print("="*40, end="\n")
+    print("=" * 40, end="\n")
+
 
 def writeCredentials(userName, password):
     with open(credentials, "a") as file:
         file.write(f"{userName}:{password}\n")
 
+
 def updateCredentials():
-    with open(credentials, 'w') as file:
+    with open(credentials, "w") as file:
         for userName, password in userDatabase.items():
             file.write(f"{userName}:{password}\n")
-            
+
+
 def readCredentials():
     try:
         with open(credentials, "r") as file:
@@ -38,9 +43,11 @@ def readCredentials():
     except FileNotFoundError:
         pass
 
+
 def createUserDirectory(userName):
     userDirectory = os.path.join(chatHistoryDir, userName)
     os.makedirs(userDirectory, exist_ok=True)
+
 
 def writeMessage(userName, receiver, message):
     senderFile = os.path.join(chatHistoryDir, userName, f"{receiver}.txt")
@@ -55,17 +62,18 @@ def writeMessage(userName, receiver, message):
     with open(receiverFile, "a") as file:
         file.write(f"{userName}:{message}\n")
 
+
 def register():
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print("Registration Portal")
-    print("="*40, end="\n")
+    print("=" * 40, end="\n")
     userName = input("Please enter your username: ")
 
     if userName in userDatabase:
         print("Username already exists. Registration failed.")
         return
-    
+
     if re.search("^[0-9]", userName):
         print("Your username cannot start with a digit")
         return
@@ -84,30 +92,35 @@ def register():
 
     chatHistory[userName] = []
     print("Registration is successful. You have become a python.")
-    
+
+
 def login():
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print("Login Portal")
-    print("="*40, end="\n")
+    print("=" * 40, end="\n")
     userName = input("Please enter your username: ")
     password = getpass.getpass("Enter your password: ")
 
-    if userName in userDatabase and userDatabase[userName] == hashlib.sha256(password.encode()).hexdigest():
+    if (
+        userName in userDatabase
+        and userDatabase[userName] == hashlib.sha256(password.encode()).hexdigest()
+    ):
         print("Congratulations! Login successful.")
         return userName
     else:
         print("Invalid username or password. Please try again.")
     return None
 
+
 def logout(userName):
     clearScreen()
-    shundorHeader()
+    headerDesign()
     if userName in userSessions:
         del userSessions[userName]
         print("Logout Successful")
     else:
-        print("Not logged in")  
+        print("Not logged in")
 
 
 def sendMessage(sender, receiver, message):
@@ -115,85 +128,53 @@ def sendMessage(sender, receiver, message):
         chatHistory[receiver].append(f"{sender}: {message}")
     else:
         chatHistory[receiver] = [f"{sender}: {message}"]
-        
+
     if sender in chatHistory:
         chatHistory[sender].append(f"You to {receiver}: {message}")
     else:
         chatHistory[sender] = [f"{receiver}: {message}"]
-        
-        
+
     writeMessage(sender, receiver, message)
     print(f"Message sent to {receiver}")
-    
+
+
 def searchUser(keyword, currentUser):
-    matchingUsers = [user for user in userDatabase.keys() if keyword.lower() in user.lower() and user != currentUser]
+    matchingUsers = [
+        user
+        for user in userDatabase.keys()
+        if keyword.lower() in user.lower() and user != currentUser
+    ]
     return matchingUsers
+
 
 def displayChatHistory(currentUser, targetUser):
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print(f"Chat history with {targetUser}")
-    print("="*40, end = "\n")
-    
+    print("=" * 40, end="\n")
+
     if currentUser in chatHistory and targetUser in chatHistory:
         currentUserChat = chatHistory[currentUser]
         targetUserChat = chatHistory[targetUser]
-        
-        targetUserMessages = [msg for msg in currentUserChat if targetUser in msg or currentUser in msg]
-        
+
+        targetUserMessages = [
+            msg for msg in currentUserChat if targetUser in msg or currentUser in msg
+        ]
+
         for message in targetUserMessages:
             print(message)
-                    
-    else: print(f"No chat history found between {currentUser} and {targetUser}")
-    
+
+    else:
+        print(f"No chat history found between {currentUser} and {targetUser}")
+
     input("\nPress enter to continue...")
-    
+
+
 def initiateChat(currentUser):
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print("Search for user")
-    print("="*40, end="\n")
-    
-    while True:
-        keyword = input("Search for user with name (or type 'quit' to exit): ")
-        
-        if keyword.lower() == "quit": break
-
-        matchingUsers = searchUser(keyword, currentUser)
-
-        if matchingUsers:
-            print("Found users: ")
-            for i, user in enumerate(matchingUsers, start=1):
-                print(f"{i}.{user}")
-
-            try:
-                choice = int(input("Choose an option (or type '0' to go back): "))
-                if choice == 0:
-                    break
-                elif 1 <= choice <= len(matchingUsers):
-                    receiver = matchingUsers[choice - 1]                            
-                    while True:
-                        message = input(f"Chat with {receiver} (type 'quit' to exit): ")
-                        if message.lower() == "quit": break
-                        
-                        sendMessage(currentUser, receiver, message)
-                        writeMessage(currentUser, receiver, message)
-                        print("")
-
-                else:
-                    print("Invalid choice")
-
-            except ValueError:
-                print("Invalid input.")
-        else:
-            print("No users found.")
-            input("Press enter to continue...")
-
-def displayChat(currentUser):
-    clearScreen()
-    shundorHeader()
-    print("Search for user")
-    print("="*40, end="\n")
+    print("=" * 40, end="\n")
 
     while True:
         keyword = input("Search for user with name (or type 'quit' to exit): ")
@@ -209,8 +190,51 @@ def displayChat(currentUser):
                 print(f"{i}.{user}")
 
             try:
-                choice = int(
-                    input("Choose an option (or type '0' to go back): "))
+                choice = int(input("Choose an option (or type '0' to go back): "))
+                if choice == 0:
+                    break
+                elif 1 <= choice <= len(matchingUsers):
+                    receiver = matchingUsers[choice - 1]
+                    while True:
+                        message = input(f"Chat with {receiver} (type 'quit' to exit): ")
+                        if message.lower() == "quit":
+                            break
+
+                        sendMessage(currentUser, receiver, message)
+                        writeMessage(currentUser, receiver, message)
+                        print("")
+
+                else:
+                    print("Invalid choice")
+
+            except ValueError:
+                print("Invalid input.")
+        else:
+            print("No users found.")
+            input("Press enter to continue...")
+
+
+def displayChat(currentUser):
+    clearScreen()
+    headerDesign()
+    print("Search for user")
+    print("=" * 40, end="\n")
+
+    while True:
+        keyword = input("Search for user with name (or type 'quit' to exit): ")
+
+        if keyword.lower() == "quit":
+            break
+
+        matchingUsers = searchUser(keyword, currentUser)
+
+        if matchingUsers:
+            print("Found users: ")
+            for i, user in enumerate(matchingUsers, start=1):
+                print(f"{i}.{user}")
+
+            try:
+                choice = int(input("Choose an option (or type '0' to go back): "))
                 if choice == 0:
                     break
                 elif 1 <= choice <= len(matchingUsers):
@@ -225,13 +249,13 @@ def displayChat(currentUser):
         else:
             print("No users found.")
             input("Press enter to continue...")
-            
+
 
 def deleteMessage(userName):
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print("Delete Message")
-    print("="*40, end="\n")
+    print("=" * 40, end="\n")
     print("1. Delete All Messages")
     print("2. Delete Messages with a specific user")
     choice = input("Please enter your choice: ")
@@ -255,15 +279,20 @@ def deleteMessage(userName):
             print("Invalid input. Please enter y or n only.")
 
     elif choice == "2":
-        receiver = input("Enter the username of the user you want to delete the messages: ")
+        receiver = input(
+            "Enter the username of the user you want to delete the messages: "
+        )
 
         deleteChoice = input("You sure want to delete? (Y/N): ")
 
         if deleteChoice.lower() == "y":
-            chatHistory[userName] = [message for message in chatHistory[userName] if receiver not in message]  # memory theke delete kortesi
+            chatHistory[userName] = [
+                message for message in chatHistory[userName] if receiver not in message
+            ]  # memory theke delete kortesi
 
             userDirectory = os.path.join(
-                chatHistoryDir, userName)  # text file theke delete
+                chatHistoryDir, userName
+            )  # text file theke delete
             if os.path.exists(userDirectory):
                 for fileName in os.listdir(userDirectory):
                     if receiver in fileName:
@@ -283,47 +312,49 @@ def deleteMessage(userName):
 
 def updateProfile(userName):
     clearScreen()
-    shundorHeader()
+    headerDesign()
     print("Update Profile")
-    print("="*40, end = "\n")
+    print("=" * 40, end="\n")
     print("1. Update username")
     print("2. Update password")
     choice = input("Please enter your choice: ")
-    
+
     if choice == "1":
         newUserName = input("Please enter your new username: ")
-        
+
         if newUserName in userDatabase:
             print("This username is already in use.")
         else:
             userDatabase[newUserName] = userDatabase.pop(userName)
-            
+
             oldUserDir = os.path.join(chatHistoryDir, userName)
             newUserDir = os.path.join(chatHistoryDir, newUserName)
-            os.rename(oldUserDir,newUserDir)
-            
+            os.rename(oldUserDir, newUserDir)
+
             userName = newUserName
             print("Username updated successfully.")
-            
+
         updateCredentials()
-            
+
     elif choice == "2":
         newPassword = getpass.getpass("Enter your new password: ")
         cNewPassword = getpass.getpass("Confirm your new password: ")
-        
+
         if newPassword != cNewPassword:
             print("Passwords do not match.")
         else:
             hashedPassword = hashlib.sha256(newPassword.encode()).hexdigest()
             userDatabase[userName] = hashedPassword
             writeCredentials(userName, hashedPassword)
-            
+
             print("Password updated successfully.")
-            
+
         updateCredentials()
-        
-    else: print("Invalid choice")
-    
+        logout(newUserName)
+
+    else:
+        print("Invalid choice")
+
     return userName
 
 
@@ -335,7 +366,7 @@ if __name__ == "__main__":
     currentUser = None
     while True:
         clearScreen()
-        shundorHeader()
+        headerDesign()
         if currentUser is None:
             print("\nOptions: ")
             print("1. Register")

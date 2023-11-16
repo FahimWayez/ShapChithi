@@ -62,7 +62,7 @@ def writeMessage(userName, receiver, message):
     with open(receiverFile, "a") as file:
         file.write(f"{userName}:{message}\n")
 
-
+    
 def register():
     clearScreen()
     headerDesign()
@@ -155,7 +155,7 @@ def displayChatHistory(currentUser, targetUser):
 
     if currentUser in chatHistory and targetUser in chatHistory:
         currentUserChat = chatHistory[currentUser]
-        targetUserChat = chatHistory[targetUser]
+        # targetUserChat = chatHistory[targetUser]
 
         targetUserMessages = [
             msg for msg in currentUserChat if targetUser in msg or currentUser in msg
@@ -201,7 +201,7 @@ def initiateChat(currentUser):
                             break
 
                         sendMessage(currentUser, receiver, message)
-                        writeMessage(currentUser, receiver, message)
+                        # writeMessage(currentUser, receiver, message)
                         print("")
 
                 else:
@@ -349,8 +349,7 @@ def updateProfile(userName):
 
             print("Password updated successfully.")
 
-        updateCredentials()
-        logout(newUserName)
+        updateCredentials()        
 
     else:
         print("Invalid choice")
